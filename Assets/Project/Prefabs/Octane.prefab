@@ -4671,7 +4671,7 @@ ParticleSystemRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 0}
-  - {fileID: 2100000, guid: 19a1e36bbcb5b4c429a5dfdc8fb914de, type: 2}
+  - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -9184,7 +9184,7 @@ ParticleSystemRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 0}
-  - {fileID: 2100000, guid: 19a1e36bbcb5b4c429a5dfdc8fb914de, type: 2}
+  - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -13735,7 +13735,7 @@ ParticleSystemRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 0}
-  - {fileID: 2100000, guid: 19a1e36bbcb5b4c429a5dfdc8fb914de, type: 2}
+  - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -18247,7 +18247,7 @@ ParticleSystemRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 0}
-  - {fileID: 2100000, guid: 19a1e36bbcb5b4c429a5dfdc8fb914de, type: 2}
+  - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -22916,7 +22916,7 @@ ParticleSystemRenderer:
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: d7f098ed9997e714193be5e86df013f4, type: 2}
+  - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -23239,8 +23239,10 @@ GameObject:
   - component: {fileID: 656916483275643478}
   - component: {fileID: 211231800357669113}
   - component: {fileID: 8673817313536811071}
+  - component: {fileID: 3713616385616677392}
+  - component: {fileID: 2755336629049597752}
   m_Layer: 10
-  m_Name: Car
+  m_Name: Octane
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -23343,6 +23345,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 15ddf05c74f978e4ca23e75a9da069f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
 --- !u!114 &7163934724229839516
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -23417,6 +23421,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a3384acb354c6e94eb3c482fb48a0e3b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
   parameters: {fileID: 11400000, guid: 7017caf56ac7d0043a66248a80efe4c0, type: 2}
 --- !u!114 &8661023916919702385
 MonoBehaviour:
@@ -23430,6 +23436,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3261b92d0ba5dd144858e8002c1be013, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
   wheels:
   - {fileID: 2586470969977792674}
   - {fileID: 6086220162433516898}
@@ -23447,6 +23455,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97958ae6bab344a4fa8d03a4714aada9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
 --- !u!114 &8078509681304992021
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -23459,6 +23469,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aaac400c24236ab40826aa22b50f0b23, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
 --- !u!114 &7951130444454696448
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -23471,6 +23483,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: df482851205707844961833dd0030708, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
 --- !u!114 &3135627938554405799
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -23483,6 +23497,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01e3ca37f8f87e34ba5f4323224f802e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
 --- !u!114 &656916483275643478
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -23524,6 +23540,52 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e731ee7099623ca4896c6c047e0f5585, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &3713616385616677392
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6057130602622990272}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sceneId: 0
+  serverOnly: 0
+  visible: 0
+  m_AssetId: 01174bafe77a00641a46cdd004127c44
+  hasSpawned: 0
+--- !u!114 &2755336629049597752
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6057130602622990272}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2f74aedd71d9a4f55b3ce499326d45fb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
+  clientAuthority: 1
+  sendInterval: 0.05
+  syncPosition: 1
+  syncRotation: 1
+  syncScale: 0
+  interpolatePosition: 1
+  interpolateRotation: 1
+  interpolateScale: 1
+  bufferTimeMultiplier: 3
+  bufferSizeLimit: 64
+  catchupThreshold: 6
+  catchupMultiplier: 0.1
+  showGizmos: 0
+  showOverlay: 0
+  overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
 --- !u!1 &7813833488005210163
 GameObject:
   m_ObjectHideFlags: 0
@@ -28214,7 +28276,7 @@ ParticleSystemRenderer:
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: d7f098ed9997e714193be5e86df013f4, type: 2}
+  - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
