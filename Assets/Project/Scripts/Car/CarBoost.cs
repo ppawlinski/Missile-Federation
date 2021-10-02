@@ -1,7 +1,8 @@
 ﻿using System;
 using UnityEngine;
+using Mirror;
 
-class CarBoost : MonoBehaviour
+class CarBoost : NetworkBehaviour
 {
     CarInput input;
     CarParametersSO parameters;
@@ -34,6 +35,7 @@ class CarBoost : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (!isLocalPlayer) return;
         isBoosting = input.BoostInput && boostAmount > 0 && !GetComponent<CarController>().IsMovementBlocked;
         if (isBoosting) Boost();
 

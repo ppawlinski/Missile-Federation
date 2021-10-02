@@ -1,7 +1,6 @@
-﻿using System;
-using UnityEngine;
+﻿using Mirror;
 
-public abstract class CarInput : MonoBehaviour
+public abstract class CarInput : NetworkBehaviour
 {
     protected float driveInput = 0;
     protected float steerInput = 0;

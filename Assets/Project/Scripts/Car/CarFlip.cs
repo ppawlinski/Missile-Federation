@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections;
 using UnityEngine;
+using Mirror;
 
-public class CarFlip : MonoBehaviour
+public class CarFlip : NetworkBehaviour
 {
     Rigidbody rb;
     CarInput input;

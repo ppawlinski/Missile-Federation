@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections;
 using UnityEngine;
-class CarJump : MonoBehaviour
+using Mirror;
+
+class CarJump : NetworkBehaviour
 {
     CarInput input;
     Rigidbody rb;
@@ -24,6 +26,7 @@ class CarJump : MonoBehaviour
     }
     private void FixedUpdate()
     {
+        if (!isLocalPlayer) return;
         if (GetComponent<CarController>().IsMovementBlocked) return;
         CheckIfDoubleJumpAvailble();
         if (input.JumpStartInput) TryJump();

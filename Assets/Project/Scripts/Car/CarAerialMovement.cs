@@ -1,7 +1,8 @@
 ﻿using System;
 using UnityEngine;
+using Mirror;
 
-class CarAerialMovement : MonoBehaviour
+class CarAerialMovement : NetworkBehaviour
 {
     CarInput input;
     Rigidbody rb;
@@ -34,6 +35,7 @@ class CarAerialMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (!isLocalPlayer) return;
         ChangeCenterOfMass();
         if (GetComponent<CarController>().IsMovementBlocked || wheels.WheelsGrounded > 0) return;
 

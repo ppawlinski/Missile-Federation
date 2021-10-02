@@ -1,5 +1,4 @@
-﻿
-public class AIControls : CarInput
+﻿public class AIControls : CarInput
 {
     public void SetDrive(float value)
     {

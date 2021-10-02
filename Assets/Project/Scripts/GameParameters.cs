@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class GameParameters : MonoBehaviour
 {
-    int playersPerTeam=2;
+    int playersPerTeam=1;
     float gameTime=300;
     private static GameParameters instance;
 

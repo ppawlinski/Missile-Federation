@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
+using Mirror;
 
-class CarWheels : MonoBehaviour
+class CarWheels : NetworkBehaviour
 {
     [Tooltip("Front wheels 0-1, back wheels 2-3")]
     [SerializeField] WheelCollider[] wheels = new WheelCollider[4];
@@ -24,6 +25,7 @@ class CarWheels : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (!isLocalPlayer) return;
         driving = GetComponent<CarBoost>().IsBoosting ? 1 : GetComponent<CarInput>().DriveInput;
         CountWheelsGrounded();
         SetFrictionAndBrakes();
@@ -36,6 +38,7 @@ class CarWheels : MonoBehaviour
 
     private void Update()
     {
+        if (!isLocalPlayer) return;
         ApplyPositionToVisualWheels();
     }
     private void CountWheelsGrounded()

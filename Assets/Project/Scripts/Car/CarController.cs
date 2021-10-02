@@ -1,8 +1,9 @@
 ﻿using UnityEngine;
+using Mirror;
 
 [RequireComponent(typeof(CarWheels), typeof(CarBoost), typeof(CarJump))]
 [RequireComponent(typeof(CarFlip), typeof(CarAerialMovement))]
-public class CarController : MonoBehaviour
+public class CarController : NetworkBehaviour
 {
     //TODO
     //flip cancels

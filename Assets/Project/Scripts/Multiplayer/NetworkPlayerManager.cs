@@ -3,8 +3,48 @@ using UnityEngine;
 public class NetworkPlayerManager : MonoBehaviour
 {
     Dictionary<int, Player> players = new Dictionary<int, Player>();
-    float playersTeam1 = 0;
-    float playersTeam2 = 0;
+    int playersPerTeam = 1;
+    int playersTeam1 = 0;
+    int playersTeam2 = 0;
+
+    List<int> chosenSpawnPoints;
+
+    //TODO make it into separate object (SO?)
+    readonly Vector3[] spawnPoints = {
+        new Vector3(82.5f,14,6.5f),
+        new Vector3(82.5f,14,-6.5f),
+        new Vector3(97.5f,14,0),
+        new Vector3(53,14,44),
+        new Vector3(53,14,-44)
+    };
+    readonly Vector3[] respawnPoints =
+    {
+        new Vector3(95,12.9f, 56),
+        new Vector3(95,12.9f, 48),
+        new Vector3(95,12.9f, -56),
+        new Vector3(95,12.9f, -48)
+    };
+    readonly Vector3 team2SpawnOffset = new Vector3(-1, 1, -1);
+    readonly Vector3 team2RespawnOffset = new Vector3(-1, 1, 1);
+
+    public void Initialize()
+    {
+        playersPerTeam = GameParameters.Instance.PlayersPerTeam;
+        chosenSpawnPoints = ChooseSpawnPoints();
+    }
+
+    private List<int> ChooseSpawnPoints()
+    {
+        List<int> chosenPoints = new List<int>();
+        int _temp;
+        while (chosenPoints.Count < playersPerTeam)
+        {
+            _temp = UnityEngine.Random.Range(0, 5);
+            if (!chosenPoints.Contains(_temp)) chosenPoints.Add(_temp);
+        }
+        return chosenPoints;
+    }
+
     public GameObject AddPlayer(GameObject playerPrefab, int connId)
     {
         GameObject playerObject = Instantiate(playerPrefab);
@@ -17,6 +57,17 @@ public class NetworkPlayerManager : MonoBehaviour
 
     public void SetPlayerPosition(Player p)
     {
-        p.PlayerObject.transform.position = new Vector3(80, 14, 5);
+        if (p.Team == 1)
+        {
+            p.PlayerObject.transform.position = spawnPoints[chosenSpawnPoints[playersTeam1]];
+            p.PlayerObject.transform.eulerAngles = new Vector3(0, -90, 0);
+            playersTeam1++;
+        }
+        else
+        {
+            p.PlayerObject.transform.position = Vector3.Scale(spawnPoints[chosenSpawnPoints[playersTeam2]], team2SpawnOffset);
+            p.PlayerObject.transform.eulerAngles = new Vector3(0, 90, 0);
+            playersTeam2++;
+        }
     }
 }
