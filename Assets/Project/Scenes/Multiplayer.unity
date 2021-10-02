@@ -1690,6 +1690,7 @@ GameObject:
   - component: {fileID: 697476633}
   - component: {fileID: 697476639}
   - component: {fileID: 697476640}
+  - component: {fileID: 697476641}
   m_Layer: 8
   m_Name: Ball
   m_TagString: Ball
@@ -1709,6 +1710,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 62e1c6818bbbc204b870fc01794be55a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
   hitForce: 10000
 --- !u!54 &697476634
 Rigidbody:
@@ -1809,7 +1812,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 697476632}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1ae2cdc17da3c354eba3aee180c597dc, type: 3}
   m_Name: 
@@ -1835,6 +1838,35 @@ MonoBehaviour:
   visible: 0
   m_AssetId: 
   hasSpawned: 0
+--- !u!114 &697476641
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 697476632}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2f74aedd71d9a4f55b3ce499326d45fb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
+  clientAuthority: 0
+  sendInterval: 0.01
+  syncPosition: 1
+  syncRotation: 1
+  syncScale: 0
+  interpolatePosition: 1
+  interpolateRotation: 1
+  interpolateScale: 1
+  bufferTimeMultiplier: 3
+  bufferSizeLimit: 64
+  catchupThreshold: 6
+  catchupMultiplier: 0.1
+  showGizmos: 0
+  showOverlay: 0
+  overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
 --- !u!1 &730240750
 GameObject:
   m_ObjectHideFlags: 0
@@ -2377,7 +2409,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &976969125
 Transform:
   m_ObjectHideFlags: 0
@@ -2430,7 +2462,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 976969124}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 059aa72d5d5a37647aaef31af9f8c939, type: 3}
   m_Name: 
@@ -4229,6 +4261,7 @@ MonoBehaviour:
   playerSpawnMethod: 0
   spawnPrefabs:
   - {fileID: 3535738232131798669, guid: 343b312269a481b44b21f92803818c62, type: 3}
+  - {fileID: 1080679924113744, guid: 5f7a7f34494ed40268eff49dbf9168bf, type: 3}
 --- !u!4 &2056362593
 Transform:
   m_ObjectHideFlags: 0

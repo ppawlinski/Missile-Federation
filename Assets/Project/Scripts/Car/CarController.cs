@@ -34,6 +34,11 @@ public class CarController : NetworkBehaviour
     {
         rb = GetComponent<Rigidbody>();
     }
+
+    private void Start()
+    {
+        if (isLocalPlayer) FindObjectOfType<CameraFollow>().SetFollowedPlayer(gameObject);
+    }
     public void SetFreeze(bool value)
     {
         IsMovementBlocked = value;

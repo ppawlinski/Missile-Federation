@@ -2,6 +2,8 @@
 using UnityEngine;
 public class NetworkPlayerManager : MonoBehaviour
 {
+    //TODO check if a code running only on the server should be a mono or network behaviour
+
     Dictionary<int, Player> players = new Dictionary<int, Player>();
     int playersPerTeam = 1;
     int playersTeam1 = 0;

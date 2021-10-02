@@ -7,13 +7,14 @@ public class CameraFollow : MonoBehaviour
 {
     //TODO add wall camera mode
     //lookatdirection can be done with extension method Flat()
-    [SerializeField] public GameObject carObject;
-    [SerializeField] public Transform ball;
-    [SerializeField] public float camDistance = 9.5f;
-    [SerializeField] public float camHeight = 3;
-    [SerializeField] public bool ballCam = false;
+    [SerializeField] GameObject carObject;
+    [SerializeField] Transform ball;
+    [SerializeField] float camDistance = 9.5f;
+    [SerializeField] float camHeight = 3;
+    [SerializeField] bool ballCam = false;
 
     PlayerManager playerManager;
+    bool playerSet = false;
 
     //normal camera offset and alternative used while in air with ballCam off
     private Vector3 cameraOffset;
@@ -26,7 +27,7 @@ public class CameraFollow : MonoBehaviour
     private Vector3 currentAlternativeCamSmoothVelocity;
     void Start()
     {
-        playerManager = FindObjectOfType<PlayerManager>();
+        /*playerManager = FindObjectOfType<PlayerManager>();
         carObject = playerManager.PlayerObject;
         Vector3 _lookingDirection = Quaternion.Euler(0, -90, 0) * Vector3.Cross(Vector3.down, carObject.transform.forward);
         Debug.DrawRay(carObject.transform.position, _lookingDirection * 20, Color.black);
@@ -38,11 +39,18 @@ public class CameraFollow : MonoBehaviour
         Vector3 templookattarget = carObject.transform.position;
         templookattarget.y = transform.position.y;
         transform.LookAt(templookattarget);
-        distanceBasedOnVelocity = camDistance;
+        distanceBasedOnVelocity = camDistance;*/
+    }
+
+    public void SetFollowedPlayer(GameObject player)
+    {
+        carObject = player;
+        playerSet = true;
     }
 
     void LateUpdate()
     {
+        if (!playerSet) return;
         //TODO increase camera distance with speed
         //add animationcurve for that and disable it when going backwards
         //distanceBasedOnVelocity = camDistance + 4* carObject.Velocity.magnitude / carObject.MaxVelocity;

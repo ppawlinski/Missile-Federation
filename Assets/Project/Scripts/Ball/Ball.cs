@@ -2,8 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Mirror;
 
-public class Ball : MonoBehaviour
+public class Ball : NetworkBehaviour
 {
     [SerializeField] private float hitForce = 4000f;
     private Rigidbody rb;
@@ -16,6 +17,7 @@ public class Ball : MonoBehaviour
 
     public void OnCollisionEnter(Collision collision)
     {
+        if (!isServer) return;
         if(collision.gameObject.CompareTag("Player"))
         {
             Vector3 forceDirection = (transform.position - collision.gameObject.transform.position).normalized;
