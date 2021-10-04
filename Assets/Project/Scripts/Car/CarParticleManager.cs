@@ -1,7 +1,8 @@
 ﻿using System.Collections;
 using UnityEngine;
+using Mirror;
 
-public class CarParticleManager : MonoBehaviour
+public class CarParticleManager : NetworkBehaviour
 {
     [SerializeField] ParticleSystem boostParticles;
     [SerializeField] ParticleSystem boostParticles2;

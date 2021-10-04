@@ -1,7 +1,8 @@
 ﻿using System;
 using UnityEngine;
+using Mirror;
 
-public class CarAudioController : MonoBehaviour
+public class CarAudioController : NetworkBehaviour
 {
     AudioManager audioManager;
     CarParametersSO parameters;
@@ -31,6 +32,8 @@ public class CarAudioController : MonoBehaviour
     public void Start()
     {
         audioManager.Play("Engine", false);
+        if (isLocalPlayer)
+            GetComponent<AudioListener>().enabled = true;
     }
     public void Update()
     {

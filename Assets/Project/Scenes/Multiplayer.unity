@@ -306,7 +306,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &115854929
 Transform:
   m_ObjectHideFlags: 0
@@ -1853,9 +1853,9 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0.1
   clientAuthority: 0
-  sendInterval: 0.01
-  syncPosition: 1
-  syncRotation: 1
+  sendInterval: 0
+  syncPosition: 0
+  syncRotation: 0
   syncScale: 0
   interpolatePosition: 1
   interpolateRotation: 1
@@ -4228,7 +4228,7 @@ MonoBehaviour:
   ReceiveWindowSize: 4096
   NonAlloc: 1
   debugLog: 0
-  statisticsGUI: 0
+  statisticsGUI: 1
   statisticsLog: 0
 --- !u!114 &2056362592
 MonoBehaviour:
@@ -4246,7 +4246,7 @@ MonoBehaviour:
   PersistNetworkManagerToOfflineScene: 0
   runInBackground: 1
   autoStartServerBuild: 1
-  serverTickRate: 30
+  serverTickRate: 60
   offlineScene: 
   onlineScene: 
   transport: {fileID: 2056362591}
