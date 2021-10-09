@@ -14,8 +14,8 @@ public class MatchStats : MonoBehaviour
     int lastTouchTeam2;
     int previousTouchTeam2;
 
-    public delegate void StatsUpdateHandler(List<PlayerStats> stats);
-    public event StatsUpdateHandler OnStatsUpdate;
+    public delegate void StatsUpdateEventHandler(List<PlayerStats> stats);
+    public event StatsUpdateEventHandler OnStatsUpdate;
 
     public struct PlayerStats
     {
@@ -43,13 +43,13 @@ public class MatchStats : MonoBehaviour
     }
     private void OnEnable()
     {
-        BallTouchManager.OnBallTouch += BallTouchUpdate;
-        GoalCheck.OnGoal += UpdateOnGoal;
+        BallTouchManager.BallTouched += BallTouchUpdate;
+        GoalCheck.GoalScored += UpdateOnGoal;
     }
     public void OnDisable()
     {
-        BallTouchManager.OnBallTouch -= BallTouchUpdate;
-        GoalCheck.OnGoal -= UpdateOnGoal;
+        BallTouchManager.BallTouched -= BallTouchUpdate;
+        GoalCheck.GoalScored -= UpdateOnGoal;
     }
     private void BallTouchUpdate(GameObject player, bool save)
     {

@@ -4,11 +4,19 @@ using UnityEngine;
 
 public class GameParameters : MonoBehaviour
 {
-    int playersPerTeam=1;
+    int playersPerTeam=2;
     float gameTime=300;
     private static GameParameters instance;
 
-    public static GameParameters Instance { get => instance; }
+    public static GameParameters Instance { get
+        {
+            if(instance == null)
+            {
+                instance = GameObject.FindObjectOfType<GameParameters>();
+            }
+            return instance;
+        }
+    }
     public int PlayersPerTeam { get => playersPerTeam; set => playersPerTeam = value; }
     public float GameTime { get => gameTime; set => gameTime = value; }
 

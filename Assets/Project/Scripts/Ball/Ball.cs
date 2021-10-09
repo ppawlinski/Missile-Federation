@@ -13,6 +13,9 @@ public class Ball : NetworkBehaviour
     {
         rb = GetComponent<Rigidbody>();
         rb.maxAngularVelocity = 2 * Mathf.PI;
+        if (isServer) return;
+        rb.detectCollisions = false;
+        this.enabled = false;
     }
 
     public void OnCollisionEnter(Collision collision)

@@ -26,7 +26,6 @@ class CarJump : NetworkBehaviour
     }
     private void FixedUpdate()
     {
-        if (!isLocalPlayer) return;
         if (GetComponent<CarController>().IsMovementBlocked) return;
         CheckIfDoubleJumpAvailble();
         if (input.JumpStartInput) TryJump();

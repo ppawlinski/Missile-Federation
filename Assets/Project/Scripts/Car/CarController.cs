@@ -14,12 +14,9 @@ public class CarController : NetworkBehaviour
     //FIX downforce when landing on the ball    
 
     [SerializeField] public CarParametersSO parameters;
-
-
- 
-
-    Rigidbody rb;   
-
+    Rigidbody rb;
+    public delegate void LocalPlayerStart(GameObject player);
+    public static event LocalPlayerStart OnLocalPlayerStart;
     public bool IsMovementBlocked { get; set; }
 
     void OnEnable()
@@ -37,7 +34,7 @@ public class CarController : NetworkBehaviour
 
     private void Start()
     {
-        if (isLocalPlayer) FindObjectOfType<CameraFollow>().SetFollowedPlayer(gameObject);
+        if (isLocalPlayer) OnLocalPlayerStart?.Invoke(gameObject);
     }
     public void SetFreeze(bool value)
     {

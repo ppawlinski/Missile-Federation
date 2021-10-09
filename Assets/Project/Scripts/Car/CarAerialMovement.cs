@@ -35,7 +35,6 @@ class CarAerialMovement : NetworkBehaviour
 
     private void FixedUpdate()
     {
-        if (!isLocalPlayer) return;
         ChangeCenterOfMass();
         if (GetComponent<CarController>().IsMovementBlocked || wheels.WheelsGrounded > 0) return;
 

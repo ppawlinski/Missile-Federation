@@ -3,12 +3,12 @@
 public class BallTouchManager : MonoBehaviour
 {
     [SerializeField] LayerMask ignoredLayers;
-    [SerializeField] PlayerManager playerManager;
+    [SerializeField] NetworkPlayerManager playerManager;
     Vector3 velocityLastFrame;
     Rigidbody rb;
 
-    public delegate void BallTouch(GameObject player, bool save);
-    public static event BallTouch OnBallTouch;
+    public delegate void BallTouchedEventHandler(GameObject player, bool save);
+    public static event BallTouchedEventHandler BallTouched;
 
     private void Awake()
     {
@@ -24,10 +24,6 @@ public class BallTouchManager : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-            Debug.DrawRay(transform.position, velocityLastFrame.normalized * 40f, Color.red, 10);
-            Debug.DrawRay(transform.position, velocityLastFrame.Flat().normalized * 40f, Color.green, 10);
-            Debug.DrawRay(transform.position, rb.velocity.normalized * 40f, Color.red, 10);
-            Debug.DrawRay(transform.position, rb.velocity.Flat().normalized * 40f, Color.green, 10);
             if (GoingTowardsGoal(velocityLastFrame, out int goal))
             {
                 int playerTeam = playerManager.GetPlayerFromInstanceId(collision.gameObject.GetInstanceID()).Team;
@@ -35,11 +31,11 @@ public class BallTouchManager : MonoBehaviour
                 if (playerTeam != goal) return;
                 if(!GoingTowardsGoal(rb.velocity, out _))
                 {
-                    OnBallTouch?.Invoke(collision.gameObject, true);
+                    BallTouched?.Invoke(collision.gameObject, true);
                     return;
                 }
             }
-            OnBallTouch?.Invoke(collision.gameObject, false);
+            BallTouched?.Invoke(collision.gameObject, false);
         }
     }
 

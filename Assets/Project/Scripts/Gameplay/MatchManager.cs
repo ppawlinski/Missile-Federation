@@ -1,42 +1,51 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class MatchManager : MonoBehaviour
 {
+    private static MatchManager instance;
+
     [SerializeField] GameObject ball;
 
-    //<??????????????????> why do i need this here
-    [SerializeField] GameObject endScreen;
-    [SerializeField] GameObject scoreBoard;
-    [SerializeField] GameObject hud;
-    [SerializeField] Text scoreText;
-    [SerializeField] Text boostText;
-    [SerializeField] Text timerText;
-    [SerializeField] Text countdownText;
-    //</??????????????????>
-
     PlayerManager playerManager;
+    public delegate void OnCountDownStart(int time);
+    public event OnCountDownStart CountDownStart;
+    public delegate void OnCountDownEnd();
+    public event OnCountDownEnd CountDownEnd;
+    public delegate void OnGameEnd();
+    public event OnGameEnd GameEnd;
+    public delegate void OnGoalsUpdate(int team1, int team2);
+    public event OnGoalsUpdate GoalsUpdate;
 
-    //public MatchStats stats;
-
+    public int Countdown { get; private set; }
 
     int scoreTeam1 = 0;
     int scoreTeam2 = 0;
-    float timer = 300;
     bool isTimerPaused = true;
     public GameObject Ball { get => ball; }
+    public float Timer { get; private set; } = 300;
+    public static MatchManager Instance
+    {
+        get
+        {
+            if(instance == null)
+            {
+                instance = FindObjectOfType<MatchManager>();
+            }
+            return instance;
+        }
+        private set => instance = value;
+    }
+
+    public PlayerManager PlayerManager { get => playerManager; }
 
     private void Awake()
     {
-        playerManager = GetComponent<PlayerManager>();
-        timer = GameParameters.Instance.GameTime;
+        if (instance != null && instance != this) Destroy(this);
+        else instance = this;
 
-        //TODO separate match stats class
-        //stats = new MatchStats(players);
-        //SetPlayersActive(true);
+        playerManager = GetComponent<PlayerManager>();
+        Timer = GameParameters.Instance.GameTime;
     }
 
     private void Start()
@@ -47,56 +56,43 @@ public class MatchManager : MonoBehaviour
     private IEnumerator StartCountdown()
     {
         playerManager.SetMovementBlock(true);
-        countdownText.enabled = true;
-        int countDown = 5;
-        while (countDown > 0)
+        Countdown = 5;
+        CountDownStart?.Invoke(Countdown);
+        Countdown = 5;
+        while (Countdown > 0)
         {
-            countdownText.text = Convert.ToString(countDown);
             yield return new WaitForSeconds(1);
-            countDown--;
+            Countdown--;
         }
         isTimerPaused = false;
-        countdownText.enabled = false;
+        CountDownEnd?.Invoke();
         playerManager.SetMovementBlock(false);
     }
 
     private void Update()
     {
-        if (!isTimerPaused) timer -= Time.deltaTime;
-        if (timer <= 0)
+        if (!isTimerPaused) Timer -= Time.deltaTime;
+        if (Timer <= 0)
         {
-            timer = 0;
-            //if ball is on the ground stop game
+            Timer = 0;
+            //TODO if ball is on the ground stop game
             playerManager.SetMovementBlock(true);
-            Time.timeScale = 0;
-            endScreen.SetActive(true);
-            scoreBoard.SetActive(true);
-            hud.SetActive(false);
-            gameObject.SetActive(false); ;
-        }
-        int minutes = Mathf.FloorToInt(timer / 60);
-        int seconds = Mathf.FloorToInt(timer % 60);
-        if (seconds > 9)
-            timerText.text = minutes + ":" + seconds;
-        else
-            timerText.text = minutes + ":0" + seconds;
 
+            //maybe set the timescale only on server
+            Time.timeScale = 0;
+            gameObject.SetActive(false);//??
+        }
         //boostText.text = Convert.ToString(playerObject.GetComponent<CarBoost>().BoostPercentage);
     }
 
     private void OnEnable()
     {
-        GoalCheck.OnGoal += GoalScored;
+        GoalCheck.GoalScored += GoalScored;
     }
 
     private void OnDisable()
     {
-        GoalCheck.OnGoal -= GoalScored;
-    }
-    private void OnDestroy()
-    {
-        //TODO
-        //stats.CleanUp();
+        GoalCheck.GoalScored -= GoalScored;
     }
 
     private void GoalScored(int goal_id, int env_id)
@@ -109,7 +105,7 @@ public class MatchManager : MonoBehaviour
         }
         else
             scoreTeam1++;
-        scoreText.text = scoreTeam1 + " - " + scoreTeam2;
+        GoalsUpdate?.Invoke(scoreTeam1, scoreTeam2);
         //reset positions
         StartCoroutine(ResetGame());
     }

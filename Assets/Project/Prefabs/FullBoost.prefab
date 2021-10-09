@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 4565728911370760527}
   - component: {fileID: 4565728911370760526}
   - component: {fileID: 4565728911370760525}
+  - component: {fileID: 7370603417265176151}
   m_Layer: 0
   m_Name: Sphere
   m_TagString: Untagged
@@ -57,6 +58,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -81,6 +83,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!135 &4565728911370760526
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -106,8 +109,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9be895d3866944a4692b8a99360a718a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
   regenTime: 10
   boostValue: 100
+--- !u!114 &7370603417265176151
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4565728911370760531}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sceneId: 0
+  serverOnly: 0
+  visible: 0
+  m_AssetId: 4b296fc0f6c5eed42af2bc47756dc312
+  hasSpawned: 0
 --- !u!1 &4565728912191658031
 GameObject:
   m_ObjectHideFlags: 0

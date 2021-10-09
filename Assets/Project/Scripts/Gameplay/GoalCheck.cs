@@ -4,10 +4,10 @@ using UnityEngine;
 
 public class GoalCheck : MonoBehaviour
 {
-    public delegate void Goal(int goal_id, int env_id);
-    public static event Goal OnGoal;
+    public delegate void GoalScoredEventHandler(int goal_id, int env_id);
+    public static event GoalScoredEventHandler GoalScored;
     public delegate void GoalExplosion(Vector3 position);
-    public static event GoalExplosion OnGoalExplosion;    
+    //public static event GoalExplosion OnGoalExplosion;    
 
     [SerializeField] private int goal_id = 0;
     [SerializeField] private GameObject environmentContainer;
@@ -17,6 +17,6 @@ public class GoalCheck : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         if (other.name == "Ball")
-            OnGoal?.Invoke(goal_id, environmentContainer.GetInstanceID());
+            GoalScored?.Invoke(goal_id, environmentContainer.GetInstanceID());
     }
 }

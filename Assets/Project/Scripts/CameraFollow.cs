@@ -25,6 +25,15 @@ public class CameraFollow : MonoBehaviour
     //camera velocity used for smooth transitions
     private Vector3 currentCamSmoothVelocity;
     private Vector3 currentAlternativeCamSmoothVelocity;
+
+    private void OnEnable()
+    {
+        CarController.OnLocalPlayerStart += SetFollowedPlayer;
+    }
+    private void OnDisable()
+    {
+        CarController.OnLocalPlayerStart -= SetFollowedPlayer;
+    }
     void Start()
     {
         /*playerManager = FindObjectOfType<PlayerManager>();

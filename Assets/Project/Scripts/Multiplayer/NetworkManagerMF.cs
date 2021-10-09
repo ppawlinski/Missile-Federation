@@ -1,18 +1,22 @@
 ﻿using Mirror;
 using UnityEngine;
 
-//TODO make some kind of interface to integrate single with multiplayer without making separate class for each functionality
 public class NetworkManagerMF : NetworkManager
 {
+    [SerializeField] GameObject matchManagerObject;
+    NetworkMatchManager matchManager;
     NetworkPlayerManager playerManager;
 
     public override void Awake()
     {
         base.Awake();
-        playerManager = GetComponent<NetworkPlayerManager>();
+        matchManager = matchManagerObject.GetComponent<NetworkMatchManager>();
+        playerManager = matchManagerObject.GetComponent<NetworkPlayerManager>();
     }
+
     public override void OnStartServer()
     {
+        base.OnStartServer();
         playerManager.Initialize();
     }
 
@@ -24,4 +28,10 @@ public class NetworkManagerMF : NetworkManager
         NetworkServer.AddPlayerForConnection(conn, player);
     }
 
+    public override void OnServerDisconnect(NetworkConnection conn)
+    {
+        base.OnServerDisconnect(conn);
+        Debug.Log("Player disconnected");
+        playerManager.RemovePlayer(conn.connectionId);
+    }
 }

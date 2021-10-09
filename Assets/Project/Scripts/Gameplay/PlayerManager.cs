@@ -60,13 +60,13 @@ public class PlayerManager : MonoBehaviour
         GameObject gObject;
         playerObject = Instantiate(playerPrefab);
         playersTeam1++;
-        player = new Player(playerObject, Player.PlayerType.Local, 1, "Player");
+        player = new Player(playerObject, 1, "Player");
         players.Add(playerObject.GetInstanceID(), player);
 
         while (playersTeam1 < playersPerTeam)
         {
             gObject = Instantiate(botPrefab);
-            player = new Player(gObject, Player.PlayerType.LocalAI, 1, "Bot " + playersTeam1);
+            player = new Player(gObject, 1, "Bot " + playersTeam1);
             players.Add(gObject.GetInstanceID(), player);
             playersTeam1++;
         }
@@ -74,7 +74,7 @@ public class PlayerManager : MonoBehaviour
         while (playersTeam2 < playersPerTeam)
         {
             gObject = Instantiate(botPrefab);
-            player = new Player(gObject, Player.PlayerType.LocalAI, 2, "Bot " + playersTeam2);
+            player = new Player(gObject, 2, "Bot " + playersTeam2);
             players.Add(gObject.GetInstanceID(), player);
             playersTeam2++;
         }
@@ -115,13 +115,6 @@ public class PlayerManager : MonoBehaviour
     }
     public void ResetPositions()
     {
-        //TODO do this in ball manager
-        /*//ball
-        Rigidbody ball_rb = Ball.GetComponent<Rigidbody>();
-        ball_rb.velocity = Vector3.zero;
-        ball_rb.angularVelocity = Vector3.zero;
-        Ball.transform.position = new Vector3(0, 14.7f, 0);
-        Ball.SetActive(true);*/
         Rigidbody rb;
         foreach (KeyValuePair<int, Player> p in players)
         {
@@ -150,7 +143,6 @@ public class PlayerManager : MonoBehaviour
     {
         foreach (KeyValuePair<int, Player> p in players)
         {
-            //TODO change playerobject to be the subobject of prefab (it makes sense ot me at the time of writing this)
             p.Value.PlayerObject.GetComponentInChildren<CarController>().SetFreeze(value);
         }
     }

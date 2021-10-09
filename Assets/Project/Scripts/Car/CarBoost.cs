@@ -7,6 +7,7 @@ class CarBoost : NetworkBehaviour
     CarInput input;
     CarParametersSO parameters;
 
+    [SyncVar]
     float boostAmount = 0;
 
     [SyncVar]
@@ -37,18 +38,12 @@ class CarBoost : NetworkBehaviour
 
     void FixedUpdate()
     {
-        if (!isLocalPlayer) return;
-        UpdateIsBoosting(input.BoostInput && boostAmount > 0 && !GetComponent<CarController>().IsMovementBlocked);
+        if (!isServer) return;
+        isBoosting = input.BoostInput && boostAmount > 0 && !GetComponent<CarController>().IsMovementBlocked;
         if (isBoosting) Boost();
 
         if (input.BoostStartInput && BoostAmount == 0) OnFailedBoostInit?.Invoke(this, EventArgs.Empty);
         input.BoostStartInput = false;
-    }
-
-    [Command]
-    void UpdateIsBoosting(bool value)
-    {
-        isBoosting = value;
     }
     private void Boost()
     {

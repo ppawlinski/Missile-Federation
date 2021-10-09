@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
@@ -9,84 +7,76 @@ public class UIScoreboard : MonoBehaviour
     [SerializeField] GameObject matchManagerObject;
     [SerializeField] GameObject scoreboardRowPrefab;
 
-    MatchStats statsManager;
-    List<GameObject> team1ScoreboardRows = new List<GameObject>();
-    List<GameObject> team2ScoreboardRows = new List<GameObject>();
+    NetworkMatchStats matchStats;
+    Dictionary<int, GameObject> rows = new Dictionary<int, GameObject>();
+
+    int team1Rows = 0;
+    int team2Rows = 0;
 
     private void Awake()
     {
-        statsManager = matchManagerObject.GetComponent<MatchStats>();
+        matchStats = matchManagerObject.GetComponent<NetworkMatchStats>();
     }
     private void OnEnable()
     {
-        statsManager.OnStatsUpdate += UpdateScoreboard;
+        matchStats.PlayerStatsAdded += AddPlayerRow;
+        NetworkPlayerManager.PlayerRemoved += RemovePlayerRow;
+        matchStats.StatsUpdated += UpdateScoreboard;
     }
     private void OnDisable()
     {
-        statsManager.OnStatsUpdate -= UpdateScoreboard;
+        matchStats.PlayerStatsAdded -= AddPlayerRow;
+        NetworkPlayerManager.PlayerRemoved -= RemovePlayerRow;
+        matchStats.StatsUpdated -= UpdateScoreboard;
     }
 
-    private void Start()
+    void AddPlayerRow(Player player)
     {
-        InitScoreboard();
-    }
+        var row = Instantiate(scoreboardRowPrefab, transform.position, Quaternion.identity, transform);
+        rows.Add(player.PlayerObject.GetInstanceID(), row);
 
-    void InitScoreboard()
-    {
-        List<MatchStats.PlayerStats> statsList = statsManager.GetStats();
-        int team1Count = 0;
-        int team2Count = 0;
-
-        foreach (MatchStats.PlayerStats stat in statsList)
+        if (player.Team == 1)
         {
-            if (stat.team == 1)
-            {
-                var row = Instantiate(scoreboardRowPrefab, transform.position, Quaternion.identity, transform);
-                row.transform.position = row.transform.position + new Vector3(0, 100 - 50 * team1Count, 0);
-                team1ScoreboardRows.Add(row);
-                team1Count++;
-            }
-            if (stat.team == 2)
-            {
-                var row = Instantiate(scoreboardRowPrefab, transform.position, Quaternion.identity, transform);
-                row.transform.position = row.transform.position + new Vector3(0, -100 - 50 * team2Count, 0);
-                team2ScoreboardRows.Add(row);
-                team2Count++;
-            }
+            row.transform.position = row.transform.position + new Vector3(0, 100 - 50 * team1Rows, 0);
+            team1Rows++;
         }
-        GetComponent<Canvas>().enabled = false;
-        UpdateScoreboard(statsList);
+        if (player.Team == 2)
+        {
+            row.transform.position = row.transform.position + new Vector3(0, -100 - 50 * team2Rows, 0);
+            team1Rows++;
+        }
+        InitializeRowValues(row, player.PlayerObject.GetInstanceID());
     }
 
-    private void UpdateScoreboard(List<MatchStats.PlayerStats> stats)
+    void RemovePlayerRow(int instanceId)
     {
-        /*TODO change the way i loop through the stats. Now it depends on the number of
-        rows per team being the same as the number of players per team which can possibly change in the future*/
-        int i = 0;
-        foreach (GameObject row in team1ScoreboardRows)
+        if (rows.ContainsKey(instanceId))
         {
-            if (stats[i].team == 1)
-            {
-                row.transform.Find("NameText").GetComponent<TextMeshProUGUI>().text = stats[i].name;
-                row.transform.Find("ScoreText").GetComponent<TextMeshProUGUI>().text = stats[i].Score.ToString();
-                row.transform.Find("GoalsText").GetComponent<TextMeshProUGUI>().text = stats[i].goals.ToString();
-                row.transform.Find("AssistsText").GetComponent<TextMeshProUGUI>().text = stats[i].assists.ToString();
-                row.transform.Find("SavesText").GetComponent<TextMeshProUGUI>().text = stats[i].saves.ToString();
-                i++;
-            }
+            rows.TryGetValue(instanceId, out GameObject row);
+            Destroy(row);
+            rows.Remove(instanceId);
         }
+    }
 
-        foreach (GameObject row in team2ScoreboardRows)
+    void InitializeRowValues(GameObject row, int instanceId)
+    {
+        NetworkMatchStats.PlayerStats stats = matchStats.GetPlayerStats(instanceId);
+        row.transform.Find("NameText").GetComponent<TextMeshProUGUI>().text = stats.name;
+        row.transform.Find("ScoreText").GetComponent<TextMeshProUGUI>().text = stats.Score.ToString();
+        row.transform.Find("GoalsText").GetComponent<TextMeshProUGUI>().text = stats.goals.ToString();
+        row.transform.Find("AssistsText").GetComponent<TextMeshProUGUI>().text = stats.assists.ToString();
+        row.transform.Find("SavesText").GetComponent<TextMeshProUGUI>().text = stats.saves.ToString();
+    }
+
+    private void UpdateScoreboard(List<NetworkMatchStats.PlayerStats> stats)
+    {
+        foreach(NetworkMatchStats.PlayerStats s in stats)
         {
-            if (stats[i].team == 2)
-            {
-                row.transform.Find("NameText").GetComponent<TextMeshProUGUI>().text = stats[i].name;
-                row.transform.Find("ScoreText").GetComponent<TextMeshProUGUI>().text = stats[i].Score.ToString();
-                row.transform.Find("GoalsText").GetComponent<TextMeshProUGUI>().text = stats[i].goals.ToString();
-                row.transform.Find("AssistsText").GetComponent<TextMeshProUGUI>().text = stats[i].assists.ToString();
-                row.transform.Find("SavesText").GetComponent<TextMeshProUGUI>().text = stats[i].saves.ToString();
-                i++;
-            }
+            if (!rows.TryGetValue(s.instanceId, out GameObject row)) continue;
+            row.transform.Find("ScoreText").GetComponent<TextMeshProUGUI>().text = s.Score.ToString();
+            row.transform.Find("GoalsText").GetComponent<TextMeshProUGUI>().text = s.goals.ToString();
+            row.transform.Find("AssistsText").GetComponent<TextMeshProUGUI>().text = s.assists.ToString();
+            row.transform.Find("SavesText").GetComponent<TextMeshProUGUI>().text = s.saves.ToString();
         }
     }
 }

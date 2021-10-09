@@ -5,10 +5,8 @@ using UnityEngine;
 public class Player
 {
     GameObject playerObject;
-    PlayerType type;
     int team;
     public string name;
-    int score;
     public int goals;
     public int assists;
     public int saves;
@@ -17,18 +15,9 @@ public class Player
     public int Team { get => team; set => team = value; }
     public GameObject PlayerObject { get => playerObject; }
 
-
-    public enum PlayerType
-    {
-        Local = 0,
-        LocalAI = 1,
-        Remote = 2
-    }
-
-    public Player(GameObject obj, PlayerType type, int team, string name = "Marvin")
+    public Player(GameObject obj, int team, string name = "Marvin")
     {
         playerObject = obj;
-        this.type = type;
         this.team = team;
         this.name = name;
         goals = 0;

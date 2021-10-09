@@ -15,12 +15,6 @@ public class InGameUIController : MonoBehaviour
     public delegate void PauseHandler(bool value);
     public static event PauseHandler OnGamePause;
 
-    PlayerManager playerManager;
-    private void Awake()
-    {
-        playerManager = matchManagerObject.GetComponent<PlayerManager>();
-    }
-
     void OnEscapeMenuToggle()
     {
         pauseMenuOpen = !pauseMenuOpen;

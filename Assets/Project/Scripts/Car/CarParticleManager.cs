@@ -2,12 +2,14 @@
 using UnityEngine;
 using Mirror;
 
-public class CarParticleManager : NetworkBehaviour
+public class CarParticleManager : MonoBehaviour
 {
     [SerializeField] ParticleSystem boostParticles;
     [SerializeField] ParticleSystem boostParticles2;
     [SerializeField] ParticleSystem sparkParticles;
     [SerializeField] ParticleSystem explosionParticles;
+
+    private bool isPlayingBoost = true;
 
     private void OnCollisionEnter(Collision collision)
     {
@@ -35,10 +37,24 @@ public class CarParticleManager : NetworkBehaviour
 
     private void Update()
     {
-        ParticleSystem.EmissionModule em = boostParticles.emission;
+        /*ParticleSystem.EmissionModule em = boostParticles.emission;
         em.enabled = GetComponent<CarBoost>().IsBoosting; 
         em = boostParticles2.emission;
-        em.enabled = GetComponent<CarBoost>().IsBoosting;
+        em.enabled = GetComponent<CarBoost>().IsBoosting;*/
+        if (GetComponent<CarBoost>().IsBoosting)
+        {
+            if (isPlayingBoost) return;
+            boostParticles.Play();
+            boostParticles2.Play();
+            isPlayingBoost = true;
+        }
+        else
+        {
+            if (!isPlayingBoost) return;
+            boostParticles.Stop();
+            boostParticles2.Stop();
+            isPlayingBoost = false;
+        }
     }
 
     public IEnumerator Explode()

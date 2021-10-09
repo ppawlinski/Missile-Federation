@@ -25,7 +25,6 @@ class CarWheels : NetworkBehaviour
 
     private void FixedUpdate()
     {
-        if (!isLocalPlayer) return;
         driving = GetComponent<CarBoost>().IsBoosting ? 1 : GetComponent<CarInput>().DriveInput;
         CountWheelsGrounded();
         SetFrictionAndBrakes();
@@ -38,7 +37,6 @@ class CarWheels : NetworkBehaviour
 
     private void Update()
     {
-        if (!isLocalPlayer) return;
         ApplyPositionToVisualWheels();
     }
     private void CountWheelsGrounded()

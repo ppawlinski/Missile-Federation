@@ -1,55 +1,105 @@
 ﻿using System;
 using UnityEngine.InputSystem;
+using Mirror;
+using UnityEngine;
 
 public class PlayerControls : CarInput
 {
     void OnDrive(InputValue value)
     {
         if (!isLocalPlayer) return;
-        driveInput = value.Get<float>();
+        CmdOnDrive(value.Get<float>());
+    }
+
+    [Command]
+    void CmdOnDrive(float value)
+    {
+        driveInput = value;
     }
 
     void OnSteer(InputValue value)
     {
         if (!isLocalPlayer) return;
-        steerInput = value.Get<float>();
+        CmdOnSteer(value.Get<float>());
+    }
+
+    [Command]
+    void CmdOnSteer(float value)
+    {
+        steerInput = value;
     }
 
     void OnJump(InputValue value)
     {
         if (!isLocalPlayer) return;
-        jumpHoldInput = Convert.ToBoolean(value.Get<float>());
+        CmdOnJump(Convert.ToBoolean(value.Get<float>()));
+    }
+
+    [Command]
+    void CmdOnJump(bool value)
+    {
+        jumpHoldInput = value;
         jumpStartInput = jumpHoldInput;
     }
 
     void OnBoost(InputValue value)
     {
         if (!isLocalPlayer) return;
-        boostInput = Convert.ToBoolean(value.Get<float>());
+        CmdOnBoost(Convert.ToBoolean(value.Get<float>()));
+    }
+
+    [Command]
+    void CmdOnBoost(bool value)
+    {
+        boostInput = value;
         boostStartInput = boostInput;
     }
 
     void OnAirRoll(InputValue value)
     {
         if (!isLocalPlayer) return;
-        airRollInput = value.Get<float>();
+        CmdOnAirRoll(value.Get<float>());
+    }
+
+    [Command]
+    void CmdOnAirRoll(float value)
+    {
+        airRollInput = value;
     }
 
     void OnAirRight(InputValue value)
     {
         if (!isLocalPlayer) return;
-        airRightInput = value.Get<float>();
+        CmdOnAirRight(value.Get<float>());
+    }
+
+    [Command]
+    void CmdOnAirRight(float value)
+    {
+        airRightInput = value;
     }
 
     void OnAirFront(InputValue value)
     {
         if (!isLocalPlayer) return;
-        airFrontInput = value.Get<float>();
+        CmdOnAirFront(value.Get<float>());
+    }
+
+    [Command]
+    void CmdOnAirFront(float value)
+    {
+        airFrontInput = value;
     }
 
     void OnPowerSlide(InputValue value)
     {
         if (!isLocalPlayer) return;
-        powerSlideInput = Convert.ToBoolean(value.Get<float>());
+        CmdOnPowerSlide(Convert.ToBoolean(value.Get<float>()));
+    }
+
+    [Command]
+    void CmdOnPowerSlide(bool value)
+    {
+        powerSlideInput = value;
     }
 }

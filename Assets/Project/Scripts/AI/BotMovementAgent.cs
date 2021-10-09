@@ -46,12 +46,12 @@ public class BotMovementAgent : Agent
     protected override void OnEnable()
     {
         base.OnEnable();
-        GoalCheck.OnGoal += goalScored;
+        GoalCheck.GoalScored += GoalScored;
     }
     protected override void OnDisable()
     {
         base.OnDisable();
-        GoalCheck.OnGoal -= goalScored;
+        GoalCheck.GoalScored -= GoalScored;
     }
 
     private void FixedUpdate()
@@ -114,7 +114,7 @@ public class BotMovementAgent : Agent
         discreteActions[7] = Convert.ToInt32(airRollInput + 1);*/
 
     }
-    private void goalScored(int goal_id, int env_id)
+    private void GoalScored(int goal_id, int env_id)
     {
         if(env_id == environmentContainer.GetInstanceID())
         {

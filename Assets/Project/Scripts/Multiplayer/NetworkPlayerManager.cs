@@ -1,13 +1,22 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-public class NetworkPlayerManager : MonoBehaviour
-{
-    //TODO check if a code running only on the server should be a mono or network behaviour
+using Mirror;
 
+public class NetworkPlayerManager : NetworkBehaviour
+{
     Dictionary<int, Player> players = new Dictionary<int, Player>();
+    Dictionary<int, int> connectionToInstanceId = new Dictionary<int, int>();
+
+    public delegate void PlayerAddedEventHandler(Player player);
+    public static event PlayerAddedEventHandler PlayerAdded;
+    public delegate void PlayerRemovedEventHandler(int instanceId);
+    public static event PlayerRemovedEventHandler PlayerRemoved;
+
     int playersPerTeam = 1;
     int playersTeam1 = 0;
     int playersTeam2 = 0;
+    int playersSetTeam1 = 0;
+    int playersSetTeam2 = 0;
 
     List<int> chosenSpawnPoints;
 
@@ -29,8 +38,11 @@ public class NetworkPlayerManager : MonoBehaviour
     readonly Vector3 team2SpawnOffset = new Vector3(-1, 1, -1);
     readonly Vector3 team2RespawnOffset = new Vector3(-1, 1, 1);
 
+    public Dictionary<int, Player> Players { get => players; private set => players = value; }
+
     public void Initialize()
     {
+        //don't have to check if isserver because only executed in OnStartServer
         playersPerTeam = GameParameters.Instance.PlayersPerTeam;
         chosenSpawnPoints = ChooseSpawnPoints();
     }
@@ -50,26 +62,65 @@ public class NetworkPlayerManager : MonoBehaviour
     public GameObject AddPlayer(GameObject playerPrefab, int connId)
     {
         GameObject playerObject = Instantiate(playerPrefab);
+
+        // teams should be chosen in the lobby
         int team = playersTeam1 < GameParameters.Instance.PlayersPerTeam ? 1 : 2;
-        Player player = new Player(playerObject, Player.PlayerType.Local, team);
-        players.Add(connId, player);
+        if (team == 1) playersTeam1++;
+        else if (team == 2) playersTeam2++;
+
+        Player player = new Player(playerObject, team);
+        players.Add(playerObject.GetInstanceID(), player);
+        connectionToInstanceId.Add(connId, playerObject.GetInstanceID());
         SetPlayerPosition(player);
+        PlayerAdded?.Invoke(player);
         return playerObject;
+    }
+
+    public void RemovePlayer(int connId)
+    {
+        if(!connectionToInstanceId.TryGetValue(connId, out int instanceId)) return;
+        players.Remove(instanceId);
+        connectionToInstanceId.Remove(connId);
+        PlayerRemoved?.Invoke(instanceId);
     }
 
     public void SetPlayerPosition(Player p)
     {
         if (p.Team == 1)
         {
-            p.PlayerObject.transform.position = spawnPoints[chosenSpawnPoints[playersTeam1]];
+            p.PlayerObject.transform.position = spawnPoints[chosenSpawnPoints[playersSetTeam1]];
             p.PlayerObject.transform.eulerAngles = new Vector3(0, -90, 0);
-            playersTeam1++;
+            playersSetTeam1++;
         }
         else
         {
-            p.PlayerObject.transform.position = Vector3.Scale(spawnPoints[chosenSpawnPoints[playersTeam2]], team2SpawnOffset);
+            p.PlayerObject.transform.position = Vector3.Scale(spawnPoints[chosenSpawnPoints[playersSetTeam2]], team2SpawnOffset);
             p.PlayerObject.transform.eulerAngles = new Vector3(0, 90, 0);
-            playersTeam2++;
+            playersSetTeam2++;
         }
+    }
+
+    public void ResetPositions()
+    {
+        playersSetTeam1 = playersSetTeam2 = 0;
+        chosenSpawnPoints = ChooseSpawnPoints();
+        foreach (KeyValuePair<int, Player> p in players)
+        {
+            SetPlayerPosition(p.Value);
+        }
+    }
+
+    public void SetMovementBlock(bool value)
+    {
+        foreach (KeyValuePair<int, Player> p in players)
+        {
+            p.Value.PlayerObject.GetComponentInChildren<CarController>().SetFreeze(value);
+        }
+    }
+
+    public Player GetPlayerFromInstanceId(int instanceId)
+    {
+        players.TryGetValue(instanceId, out Player p);
+        return p;
     }
 }
