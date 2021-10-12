@@ -6,6 +6,7 @@ public class NetworkMatchStats : NetworkBehaviour
 {
     Dictionary<int, Player> players = new Dictionary<int, Player>();
     Dictionary<int, float> lastTouchTimes = new Dictionary<int, float>();
+    NetworkPlayerManager playerManager;
 
     int lastTouchTeam1;
     int previousTouchTeam1;
@@ -49,8 +50,16 @@ public class NetworkMatchStats : NetworkBehaviour
         GoalCheck.GoalScored -= UpdateOnGoal;
     }
 
-    private void AddPlayer(Player player)
+    private void Awake()
     {
+        playerManager = GetComponent<NetworkPlayerManager>();
+    }
+
+    private void AddPlayer(int instanceId)
+    {
+        Debug.Log("Addplayer");
+        Player player = playerManager.GetPlayerFromInstanceId(instanceId);
+        if (players.TryGetValue(player.PlayerObject.GetInstanceID(), out _)) return;
         players.Add(player.PlayerObject.GetInstanceID(), player);
         lastTouchTimes.Add(player.PlayerObject.GetInstanceID(), 0f);
         PlayerStatsAdded?.Invoke(player);

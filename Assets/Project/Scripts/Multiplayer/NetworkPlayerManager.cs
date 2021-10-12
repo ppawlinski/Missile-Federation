@@ -7,7 +7,7 @@ public class NetworkPlayerManager : NetworkBehaviour
     Dictionary<int, Player> players = new Dictionary<int, Player>();
     Dictionary<int, int> connectionToInstanceId = new Dictionary<int, int>();
 
-    public delegate void PlayerAddedEventHandler(Player player);
+    public delegate void PlayerAddedEventHandler(int connectionId);
     public static event PlayerAddedEventHandler PlayerAdded;
     public delegate void PlayerRemovedEventHandler(int instanceId);
     public static event PlayerRemovedEventHandler PlayerRemoved;
@@ -63,7 +63,7 @@ public class NetworkPlayerManager : NetworkBehaviour
     {
         GameObject playerObject = Instantiate(playerPrefab);
 
-        // teams should be chosen in the lobby
+        //teams should be chosen in the lobby
         int team = playersTeam1 < GameParameters.Instance.PlayersPerTeam ? 1 : 2;
         if (team == 1) playersTeam1++;
         else if (team == 2) playersTeam2++;
@@ -72,8 +72,16 @@ public class NetworkPlayerManager : NetworkBehaviour
         players.Add(playerObject.GetInstanceID(), player);
         connectionToInstanceId.Add(connId, playerObject.GetInstanceID());
         SetPlayerPosition(player);
-        PlayerAdded?.Invoke(player);
+        PlayerAdded?.Invoke(playerObject.GetInstanceID());
+        RpcInvokePlayerAdded(playerObject.GetInstanceID());
         return playerObject;
+    }
+
+    [ClientRpc]
+    private void RpcInvokePlayerAdded(int instanceId)
+    {
+        Debug.Log("ClientRpc");
+        PlayerAdded?.Invoke(instanceId);
     }
 
     public void RemovePlayer(int connId)
@@ -81,6 +89,13 @@ public class NetworkPlayerManager : NetworkBehaviour
         if(!connectionToInstanceId.TryGetValue(connId, out int instanceId)) return;
         players.Remove(instanceId);
         connectionToInstanceId.Remove(connId);
+        PlayerRemoved?.Invoke(instanceId);
+        RpcInvokePlayerRemoved(instanceId);
+    }
+
+    [ClientRpc]
+    private void RpcInvokePlayerRemoved(int instanceId)
+    {
         PlayerRemoved?.Invoke(instanceId);
     }
 
