@@ -26,7 +26,7 @@ public class BallTouchManager : MonoBehaviour
         {
             if (GoingTowardsGoal(velocityLastFrame, out int goal))
             {
-                int playerTeam = playerManager.GetPlayerFromInstanceId(collision.gameObject.GetInstanceID()).Team;
+                int playerTeam = playerManager.GetPlayerFromInstanceId(collision.gameObject.GetInstanceID()).GetComponent<PlayerInfo>().Team;
 
                 if (playerTeam != goal) return;
                 if(!GoingTowardsGoal(rb.velocity, out _))

@@ -11,7 +11,7 @@ public class PlayerManager : MonoBehaviour
     int playersPerTeam = 1;
     int playersTeam1 = 0;
     int playersTeam2 = 0;
-    public Dictionary<int, Player> players = new Dictionary<int, Player>();
+    public Dictionary<int, PlayerInfo> players = new Dictionary<int, PlayerInfo>();
 
     readonly Vector3[] spawnPoints = {
         new Vector3(82.5f,14,6.5f),
@@ -56,17 +56,19 @@ public class PlayerManager : MonoBehaviour
     }
     private void InstantiatePlayersLocal()
     {
-        Player player;
+        PlayerInfo player;
         GameObject gObject;
         playerObject = Instantiate(playerPrefab);
         playersTeam1++;
-        player = new Player(playerObject, 1, "Player");
+        player = playerObject.GetComponent<PlayerInfo>();
+        player.SetValues(1, "Player");
         players.Add(playerObject.GetInstanceID(), player);
 
         while (playersTeam1 < playersPerTeam)
         {
             gObject = Instantiate(botPrefab);
-            player = new Player(gObject, 1, "Bot " + playersTeam1);
+            player = gObject.GetComponent<PlayerInfo>();
+            player.SetValues(1, "Bot " + playersTeam1);
             players.Add(gObject.GetInstanceID(), player);
             playersTeam1++;
         }
@@ -74,7 +76,8 @@ public class PlayerManager : MonoBehaviour
         while (playersTeam2 < playersPerTeam)
         {
             gObject = Instantiate(botPrefab);
-            player = new Player(gObject, 2, "Bot " + playersTeam2);
+            player = gObject.GetComponent<PlayerInfo>();
+            player.SetValues(2, "Bot " + playersTeam2);
             players.Add(gObject.GetInstanceID(), player);
             playersTeam2++;
         }
@@ -96,9 +99,9 @@ public class PlayerManager : MonoBehaviour
         int playersSetTeam1 = 0;
         int playersSetTeam2 = 0;
         GameObject temp;
-        foreach (KeyValuePair<int, Player> p in players)
+        foreach (KeyValuePair<int, PlayerInfo> p in players)
         {
-            temp = p.Value.PlayerObject;
+            temp = p.Value.gameObject;
             if (p.Value.Team == 1)
             {
                 temp.transform.position = spawnPoints[points[playersSetTeam1]];
@@ -116,12 +119,12 @@ public class PlayerManager : MonoBehaviour
     public void ResetPositions()
     {
         Rigidbody rb;
-        foreach (KeyValuePair<int, Player> p in players)
+        foreach (KeyValuePair<int, PlayerInfo> p in players)
         {
-            rb = p.Value.PlayerObject.GetComponent<Rigidbody>();
+            rb = p.Value.gameObject.GetComponent<Rigidbody>();
             rb.velocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;
-            p.Value.PlayerObject.GetComponent<CarBoost>().SetBoostAmount(33);
+            p.Value.gameObject.GetComponent<CarBoost>().SetBoostAmount(33);
         }
         SetPlayerPositions();
     }
@@ -133,7 +136,7 @@ public class PlayerManager : MonoBehaviour
     {
         yield return new WaitForSeconds(3);
         int position = UnityEngine.Random.Range(0, 4);
-        Player temp;
+        PlayerInfo temp;
         players.TryGetValue(carObject.GetInstanceID(), out temp);
         carObject.transform.position = temp.Team == 1 ? respawnPoints[position] : Vector3.Scale(respawnPoints[position], team2RespawnOffset);
         carObject.transform.eulerAngles = temp.Team == 1 ? new Vector3(0, -90, 0) : new Vector3(0, 90, 0);
@@ -141,21 +144,21 @@ public class PlayerManager : MonoBehaviour
     }
     public void SetMovementBlock(bool value)
     {
-        foreach (KeyValuePair<int, Player> p in players)
+        foreach (KeyValuePair<int, PlayerInfo> p in players)
         {
-            p.Value.PlayerObject.GetComponentInChildren<CarController>().SetFreeze(value);
+            p.Value.gameObject.GetComponentInChildren<CarController>().SetFreeze(value);
         }
     }
     public void PauseAudio(bool value)
     {
-        foreach (KeyValuePair<int, Player> p in players)
+        /*foreach (KeyValuePair<int, PlayerInfo> p in players)
         {
             p.Value.PauseAudio(value);
-        }
+        }*/
     }
-    public Player GetPlayerFromInstanceId(int id)
+    public PlayerInfo GetPlayerFromInstanceId(int id)
     {
-        if (!players.TryGetValue(id, out Player p)) return null;
+        if (!players.TryGetValue(id, out PlayerInfo p)) return null;
         return p;
     }
 }

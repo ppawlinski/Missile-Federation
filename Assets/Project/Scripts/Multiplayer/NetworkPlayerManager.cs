@@ -1,20 +1,26 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
+using System.Collections;
 
 public class NetworkPlayerManager : NetworkBehaviour
 {
-    Dictionary<int, Player> players = new Dictionary<int, Player>();
+    SyncDictionary<int, PlayerInfo> players = new SyncDictionary<int, PlayerInfo>();
     Dictionary<int, int> connectionToInstanceId = new Dictionary<int, int>();
+    Dictionary<uint, int> netIdToInstanceId = new Dictionary<uint, int>();
 
     public delegate void PlayerAddedEventHandler(int connectionId);
     public static event PlayerAddedEventHandler PlayerAdded;
     public delegate void PlayerRemovedEventHandler(int instanceId);
     public static event PlayerRemovedEventHandler PlayerRemoved;
 
-    int playersPerTeam = 1;
+    int playersPerTeam = 2;
+
+    [SyncVar (hook = nameof(PlayerCountChanged))]
     int playersTeam1 = 0;
+    [SyncVar(hook = nameof(PlayerCountChanged))]
     int playersTeam2 = 0;
+
     int playersSetTeam1 = 0;
     int playersSetTeam2 = 0;
 
@@ -38,7 +44,7 @@ public class NetworkPlayerManager : NetworkBehaviour
     readonly Vector3 team2SpawnOffset = new Vector3(-1, 1, -1);
     readonly Vector3 team2RespawnOffset = new Vector3(-1, 1, 1);
 
-    public Dictionary<int, Player> Players { get => players; private set => players = value; }
+    public SyncDictionary<int, PlayerInfo> Players { get => players; private set => players = value; }
 
     public void Initialize()
     {
@@ -46,6 +52,7 @@ public class NetworkPlayerManager : NetworkBehaviour
         playersPerTeam = GameParameters.Instance.PlayersPerTeam;
         chosenSpawnPoints = ChooseSpawnPoints();
     }
+
 
     private List<int> ChooseSpawnPoints()
     {
@@ -68,19 +75,35 @@ public class NetworkPlayerManager : NetworkBehaviour
         if (team == 1) playersTeam1++;
         else if (team == 2) playersTeam2++;
 
-        Player player = new Player(playerObject, team);
-        players.Add(playerObject.GetInstanceID(), player);
+        playerObject.GetComponent<PlayerInfo>().SetValues(team, $"{ playerPrefab.name}[connId={ connId}]");
+
+        players.Add(playerObject.GetInstanceID(), playerObject.GetComponent<PlayerInfo>());
         connectionToInstanceId.Add(connId, playerObject.GetInstanceID());
-        SetPlayerPosition(player);
-        PlayerAdded?.Invoke(playerObject.GetInstanceID());
         RpcInvokePlayerAdded(playerObject.GetInstanceID());
+
+        SetPlayerPosition(playerObject);
         return playerObject;
+    }
+
+    public override void OnStartClient()
+    {
+        base.OnStartClient();
+        if (isClientOnly)
+        {
+            foreach(PlayerInfo p in FindObjectsOfType<PlayerInfo>())
+            {
+                players.Add(p.gameObject.GetInstanceID(),p);
+            }
+        }
+        foreach(KeyValuePair<int, PlayerInfo> p in players)
+        {
+            PlayerAdded?.Invoke(p.Value.GetInstanceID());
+        }
     }
 
     [ClientRpc]
     private void RpcInvokePlayerAdded(int instanceId)
     {
-        Debug.Log("ClientRpc");
         PlayerAdded?.Invoke(instanceId);
     }
 
@@ -99,18 +122,19 @@ public class NetworkPlayerManager : NetworkBehaviour
         PlayerRemoved?.Invoke(instanceId);
     }
 
-    public void SetPlayerPosition(Player p)
+    public void SetPlayerPosition(GameObject p)
     {
-        if (p.Team == 1)
+        Debug.Log(p);
+        if (p.GetComponent<PlayerInfo>().Team == 1)
         {
-            p.PlayerObject.transform.position = spawnPoints[chosenSpawnPoints[playersSetTeam1]];
-            p.PlayerObject.transform.eulerAngles = new Vector3(0, -90, 0);
+            p.transform.position = spawnPoints[chosenSpawnPoints[playersSetTeam1]];
+            p.transform.eulerAngles = new Vector3(0, -90, 0);
             playersSetTeam1++;
         }
         else
         {
-            p.PlayerObject.transform.position = Vector3.Scale(spawnPoints[chosenSpawnPoints[playersSetTeam2]], team2SpawnOffset);
-            p.PlayerObject.transform.eulerAngles = new Vector3(0, 90, 0);
+            p.transform.position = Vector3.Scale(spawnPoints[chosenSpawnPoints[playersSetTeam2]], team2SpawnOffset);
+            p.transform.eulerAngles = new Vector3(0, 90, 0);
             playersSetTeam2++;
         }
     }
@@ -119,23 +143,35 @@ public class NetworkPlayerManager : NetworkBehaviour
     {
         playersSetTeam1 = playersSetTeam2 = 0;
         chosenSpawnPoints = ChooseSpawnPoints();
-        foreach (KeyValuePair<int, Player> p in players)
+        foreach (KeyValuePair<int, PlayerInfo> p in players)
         {
-            SetPlayerPosition(p.Value);
+            SetPlayerPosition(p.Value.gameObject);
         }
     }
 
     public void SetMovementBlock(bool value)
     {
-        foreach (KeyValuePair<int, Player> p in players)
+        foreach (KeyValuePair<int, PlayerInfo> p in players)
         {
-            p.Value.PlayerObject.GetComponentInChildren<CarController>().SetFreeze(value);
+            p.Value.GetComponent<CarController>().SetFreeze(value);
         }
     }
 
-    public Player GetPlayerFromInstanceId(int instanceId)
+    public PlayerInfo GetPlayerFromInstanceId(int instanceId)
     {
-        players.TryGetValue(instanceId, out Player p);
+        players.TryGetValue(instanceId, out PlayerInfo p);
         return p;
+    }
+
+    public PlayerInfo GetPlayerFromNetId(uint netId)
+    {
+        netIdToInstanceId.TryGetValue(netId, out int instanceId);
+        players.TryGetValue(instanceId, out PlayerInfo p);
+        return p;
+    }
+
+    public void PlayerCountChanged(int oldValue, int newVlaue)
+    {
+        Debug.Log($"Player count changed from {oldValue} to {newVlaue}");
     }
 }

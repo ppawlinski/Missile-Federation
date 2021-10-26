@@ -290,6 +290,7 @@ GameObject:
   - component: {fileID: 69108608}
   - component: {fileID: 69108610}
   - component: {fileID: 69108609}
+  - component: {fileID: 69108611}
   m_Layer: 0
   m_Name: MatchManager
   m_TagString: Untagged
@@ -367,6 +368,20 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: cf47831142cf7cd479f9ad4b43609b1b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
+--- !u!114 &69108611
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 69108605}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: df3a8f7665dd7f2468c24ddf414d13fa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   syncMode: 0

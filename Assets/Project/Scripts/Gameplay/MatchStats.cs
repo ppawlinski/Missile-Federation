@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class MatchStats : MonoBehaviour
 {
-    Dictionary<int, Player> players = new Dictionary<int, Player>();
+    Dictionary<int, PlayerInfo> players = new Dictionary<int, PlayerInfo>();
     Dictionary<int, float> lastTouchTimes = new Dictionary<int, float>();
     PlayerManager playerManager;
 
@@ -35,7 +35,7 @@ public class MatchStats : MonoBehaviour
     private void Awake()
     {
         players = GetComponent<PlayerManager>().players;
-        foreach(KeyValuePair<int, Player> player in players)
+        foreach(KeyValuePair<int, PlayerInfo> player in players)
         {
             lastTouchTimes.Add(player.Key, 0f);
         }
@@ -55,7 +55,7 @@ public class MatchStats : MonoBehaviour
     {
         Debug.Log(save);
         int playerID = player.GetInstanceID();
-        if (!players.TryGetValue(playerID, out Player p)) return;
+        if (!players.TryGetValue(playerID, out PlayerInfo p)) return;
         if (p.Team == 1)
         {
             if (lastTouchTeam1 != playerID)
@@ -87,7 +87,7 @@ public class MatchStats : MonoBehaviour
     {
         if (goalId == 1)
         {
-            if (players.TryGetValue(lastTouchTeam2, out Player p))
+            if (players.TryGetValue(lastTouchTeam2, out PlayerInfo p))
                 p.goals++;
             if (players.TryGetValue(previousTouchTeam2, out p))
                 p.assists++;
@@ -95,7 +95,7 @@ public class MatchStats : MonoBehaviour
         }
         if (goalId == 2)
         {
-            if (players.TryGetValue(lastTouchTeam1, out Player p))
+            if (players.TryGetValue(lastTouchTeam1, out PlayerInfo p))
                 p.goals++;
             if (players.TryGetValue(previousTouchTeam1, out p))
                 p.assists++;
@@ -117,10 +117,10 @@ public class MatchStats : MonoBehaviour
         PlayerStats stats;
         List<PlayerStats> statsList = new List<PlayerStats>();
 
-        foreach (KeyValuePair<int, Player> p in players)
+        foreach (KeyValuePair<int, PlayerInfo> p in players)
         {
             stats.team = p.Value.Team;
-            stats.name = p.Value.name;
+            stats.name = p.Value.playerName;
             stats.goals = p.Value.goals;
             stats.assists = p.Value.assists;
             stats.saves = p.Value.saves;

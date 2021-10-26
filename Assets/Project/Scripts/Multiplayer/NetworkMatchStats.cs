@@ -4,7 +4,7 @@ using Mirror;
 
 public class NetworkMatchStats : NetworkBehaviour
 {
-    Dictionary<int, Player> players = new Dictionary<int, Player>();
+    Dictionary<int, PlayerInfo> players = new Dictionary<int, PlayerInfo>();
     Dictionary<int, float> lastTouchTimes = new Dictionary<int, float>();
     NetworkPlayerManager playerManager;
 
@@ -16,24 +16,9 @@ public class NetworkMatchStats : NetworkBehaviour
 
     public delegate void StatsUpdatedEventHandler(List<PlayerStats> stats);
     public event StatsUpdatedEventHandler StatsUpdated; 
-    public delegate void PlayerStatsAddedEventHandler(Player player);
+    public delegate void PlayerStatsAddedEventHandler(PlayerInfo player);
     public event PlayerStatsAddedEventHandler PlayerStatsAdded;
 
-    public struct PlayerStats
-    {
-        public int instanceId;
-        public int team;
-        public string name;
-        public int goals;
-        public int assists;
-        public int saves;
-        public int touches;
-        public int Score { get => goals * 100 + (assists + saves) * 50 + (touches *2); }
-        public override string ToString()
-        {
-            return name + " - " + goals + " - " + assists + " - " + saves + " - " + Score;
-        }
-    }
 
     private void OnEnable()
     {
@@ -54,15 +39,14 @@ public class NetworkMatchStats : NetworkBehaviour
     {
         playerManager = GetComponent<NetworkPlayerManager>();
     }
-
     private void AddPlayer(int instanceId)
     {
-        Debug.Log("Addplayer");
-        Player player = playerManager.GetPlayerFromInstanceId(instanceId);
-        if (players.TryGetValue(player.PlayerObject.GetInstanceID(), out _)) return;
-        players.Add(player.PlayerObject.GetInstanceID(), player);
-        lastTouchTimes.Add(player.PlayerObject.GetInstanceID(), 0f);
-        PlayerStatsAdded?.Invoke(player);
+        Debug.Log("PlayerAdded");
+        PlayerInfo pInfo = playerManager.GetPlayerFromInstanceId(instanceId);
+        if (players.TryGetValue(pInfo.gameObject.GetInstanceID(), out _)) return;
+        players.Add(pInfo.gameObject.GetInstanceID(), pInfo);
+        lastTouchTimes.Add(pInfo.gameObject.GetInstanceID(), 0f);
+        PlayerStatsAdded?.Invoke(pInfo);
     }
 
     private void RemovePlayer(int instanceId)
@@ -74,7 +58,7 @@ public class NetworkMatchStats : NetworkBehaviour
     private void BallTouchUpdate(GameObject player, bool save)
     {
         int playerID = player.GetInstanceID();
-        if (!players.TryGetValue(playerID, out Player p)) return;
+        if (!players.TryGetValue(playerID, out PlayerInfo p)) return;
         if (p.Team == 1)
         {
             if (lastTouchTeam1 != playerID)
@@ -108,7 +92,7 @@ public class NetworkMatchStats : NetworkBehaviour
     {
         if (goalId == 1)
         {
-            if (players.TryGetValue(lastTouchTeam2, out Player p))
+            if (players.TryGetValue(lastTouchTeam2, out PlayerInfo p))
                 p.goals++;
             if (players.TryGetValue(previousTouchTeam2, out p))
                 p.assists++;
@@ -116,7 +100,7 @@ public class NetworkMatchStats : NetworkBehaviour
         }
         if (goalId == 2)
         {
-            if (players.TryGetValue(lastTouchTeam1, out Player p))
+            if (players.TryGetValue(lastTouchTeam1, out PlayerInfo p))
                 p.goals++;
             if (players.TryGetValue(previousTouchTeam1, out p))
                 p.assists++;
@@ -138,11 +122,11 @@ public class NetworkMatchStats : NetworkBehaviour
         PlayerStats stats;
         List<PlayerStats> statsList = new List<PlayerStats>();
 
-        foreach (KeyValuePair<int, Player> p in players)
+        foreach (KeyValuePair<int, PlayerInfo> p in players)
         {
-            stats.instanceId = p.Value.PlayerObject.GetInstanceID();
+            stats.instanceId = p.Value.gameObject.GetInstanceID();
             stats.team = p.Value.Team;
-            stats.name = p.Value.name;
+            stats.name = p.Value.playerName;
             stats.goals = p.Value.goals;
             stats.assists = p.Value.assists;
             stats.saves = p.Value.saves;
@@ -154,15 +138,30 @@ public class NetworkMatchStats : NetworkBehaviour
 
     public PlayerStats GetPlayerStats(int instanceId)
     {
-        if (!players.TryGetValue(instanceId, out Player player)) return default;
+        if (!players.TryGetValue(instanceId, out PlayerInfo player)) return default;
         PlayerStats stats;
         stats.instanceId = instanceId;
         stats.team = player.Team;
-        stats.name = player.name;
+        stats.name = player.playerName;
         stats.goals = player.goals;
         stats.assists = player.assists;
         stats.saves = player.saves;
         stats.touches = player.touches;
         return stats;
+    }
+}
+public struct PlayerStats
+{
+    public int instanceId;
+    public int team;
+    public string name;
+    public int goals;
+    public int assists;
+    public int saves;
+    public int touches;
+    public int Score { get => goals * 100 + (assists + saves) * 50 + (touches * 2); }
+    public override string ToString()
+    {
+        return name + " - " + goals + " - " + assists + " - " + saves + " - " + Score;
     }
 }

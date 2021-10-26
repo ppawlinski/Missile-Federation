@@ -1,4 +1,5 @@
 ﻿using Mirror;
+using System.Collections;
 using UnityEngine;
 
 public class NetworkManagerMF : NetworkManager
@@ -23,9 +24,11 @@ public class NetworkManagerMF : NetworkManager
     public override void OnServerAddPlayer(NetworkConnection conn)
     {
         GameObject player = playerManager.AddPlayer(playerPrefab, conn.connectionId);
+        Debug.Log("OnServerAddPlayer");
 
         player.name = $"{playerPrefab.name} [connId={conn.connectionId}]";
         NetworkServer.AddPlayerForConnection(conn, player);
+        
     }
 
     public override void OnServerDisconnect(NetworkConnection conn)
@@ -33,5 +36,17 @@ public class NetworkManagerMF : NetworkManager
         base.OnServerDisconnect(conn);
         Debug.Log("Player disconnected");
         playerManager.RemovePlayer(conn.connectionId);
+    }
+
+    public override void OnStartClient()
+    {
+        base.OnStartClient();
+        Debug.Log("OnStartClient");
+    }
+
+    public override void OnServerReady(NetworkConnection conn)
+    {
+        base.OnServerReady(conn);
+        Debug.Log("onserverReady");
     }
 }

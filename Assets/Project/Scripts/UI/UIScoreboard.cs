@@ -30,10 +30,10 @@ public class UIScoreboard : MonoBehaviour
         matchStats.StatsUpdated -= UpdateScoreboard;
     }
 
-    void AddPlayerRow(Player player)
+    void AddPlayerRow(PlayerInfo player)
     {
         var row = Instantiate(scoreboardRowPrefab, transform.position, Quaternion.identity, transform);
-        rows.Add(player.PlayerObject.GetInstanceID(), row);
+        rows.Add(player.gameObject.GetInstanceID(), row);
 
         if (player.Team == 1)
         {
@@ -45,7 +45,7 @@ public class UIScoreboard : MonoBehaviour
             row.transform.position = row.transform.position + new Vector3(0, -100 - 50 * team2Rows, 0);
             team1Rows++;
         }
-        InitializeRowValues(row, player.PlayerObject.GetInstanceID());
+        InitializeRowValues(row, player.gameObject.GetInstanceID());
     }
 
     void RemovePlayerRow(int instanceId)
@@ -60,7 +60,7 @@ public class UIScoreboard : MonoBehaviour
 
     void InitializeRowValues(GameObject row, int instanceId)
     {
-        NetworkMatchStats.PlayerStats stats = matchStats.GetPlayerStats(instanceId);
+        PlayerStats stats = matchStats.GetPlayerStats(instanceId);
         row.transform.Find("NameText").GetComponent<TextMeshProUGUI>().text = stats.name;
         row.transform.Find("ScoreText").GetComponent<TextMeshProUGUI>().text = stats.Score.ToString();
         row.transform.Find("GoalsText").GetComponent<TextMeshProUGUI>().text = stats.goals.ToString();
@@ -68,9 +68,9 @@ public class UIScoreboard : MonoBehaviour
         row.transform.Find("SavesText").GetComponent<TextMeshProUGUI>().text = stats.saves.ToString();
     }
 
-    private void UpdateScoreboard(List<NetworkMatchStats.PlayerStats> stats)
+    private void UpdateScoreboard(List<PlayerStats> stats)
     {
-        foreach(NetworkMatchStats.PlayerStats s in stats)
+        foreach(PlayerStats s in stats)
         {
             if (!rows.TryGetValue(s.instanceId, out GameObject row)) continue;
             row.transform.Find("ScoreText").GetComponent<TextMeshProUGUI>().text = s.Score.ToString();

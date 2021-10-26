@@ -586,6 +586,7 @@ GameObject:
   - component: {fileID: 211231800357669113}
   - component: {fileID: 8673817313536811071}
   - component: {fileID: 8675239427707324228}
+  - component: {fileID: 4796420451093269153}
   - component: {fileID: 5267369240617787903}
   m_Layer: 10
   m_Name: Octane
@@ -917,6 +918,25 @@ MonoBehaviour:
   showGizmos: 0
   showOverlay: 0
   overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
+--- !u!114 &4796420451093269153
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6057130602622990272}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 65b6a94b83dc94d43b6e79fc1a496cb0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
+  playerName: 
+  goals: 0
+  assists: 0
+  saves: 0
+  touches: 0
 --- !u!114 &5267369240617787903
 MonoBehaviour:
   m_ObjectHideFlags: 0
